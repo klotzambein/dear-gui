@@ -3,8 +3,6 @@ use std::any::Any;
 use imgui::{im_str, Condition, StyleVar, Ui, Window};
 
 use super::{UIComponent, UIComponentAny};
-use super::CommandExecutor;
-// use crate::command::executor::CommandExecutor;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum DockingDirection {
@@ -14,20 +12,20 @@ pub enum DockingDirection {
     Right,
 }
 
-pub struct DockingLayout<T> {
-    components: Vec<DockedUIComponent<T>>,
+pub struct DockingLayout<T, TCb> {
+    components: Vec<DockedUIComponent<T, TCb>>,
     main_menu_bar: bool,
 }
 
-struct DockedUIComponent<T> {
-    component: Box<dyn UIComponentAny>,
+struct DockedUIComponent<T, TCb> {
+    component: Box<dyn UIComponentAny<TCb>>,
     model_fn: Box<dyn Fn(&T) -> &dyn Any>,
     direction: DockingDirection,
     size: f32,
 }
 
-impl<T> DockingLayout<T> {
-    pub fn new(main_menu_bar: bool) -> DockingLayout<T> {
+impl<T, TCb> DockingLayout<T, TCb> {
+    pub fn new(main_menu_bar: bool) -> DockingLayout<T, TCb> {
         DockingLayout {
             main_menu_bar,
             components: Vec::new(),
@@ -36,7 +34,7 @@ impl<T> DockingLayout<T> {
 
     pub fn add<C, F>(&mut self, component: C, model_fn: F, direction: DockingDirection, size: f32)
     where
-        C: UIComponent + 'static,
+        C: UIComponent<TCb> + 'static,
         C::Model: 'static,
         F: (Fn(&T) -> &C::Model) + 'static,
     {
@@ -49,9 +47,9 @@ impl<T> DockingLayout<T> {
     }
 }
 
-impl<T> UIComponent for DockingLayout<T> {
+impl<T, TCb> UIComponent<TCb> for DockingLayout<T, TCb> {
     type Model = T;
-    fn draw(&mut self, ui: &Ui, model: &T, cmd: &mut CommandExecutor) {
+    fn draw(&mut self, ui: &Ui, model: &T, cmd: &mut TCb) {
         let sv = ui.push_style_vars(&[
             StyleVar::WindowRounding(0.0),
             StyleVar::WindowMinSize([0., 0.]),
