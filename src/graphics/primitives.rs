@@ -68,6 +68,14 @@ impl LinePoint {
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
+pub struct ColoredPoint {
+    pub vertex: Vf2,
+    pub color: Color,
+}
+implement_vertex!(ColoredPoint, vertex, color);
+
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Line {
     start: Vf2,
     end: Vf2,

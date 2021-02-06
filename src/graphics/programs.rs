@@ -9,10 +9,13 @@ use euclid::Transform2D;
 use crate::geometry::{CanvasSpace, ModelSpace, ScreenSpace};
 use crate::graphics::primitives::{Color, ColoredLine, Line, LinePoint};
 
+use super::primitives::ColoredPoint;
+
 pub struct Programs {
     pub parameters: DrawParameters<'static>,
     pub line_strip: Program,
     pub line: Program,
+    pub colored_point: Program,
     pub colored_line: Program,
 }
 
@@ -52,6 +55,7 @@ impl Programs {
             line_strip: include_shaders!(display, "line_strip", "vgf")?,
             line: include_shaders!(display, "line", "vgf")?,
             colored_line: include_shaders!(display, "colored_line", "vgf")?,
+            colored_point: include_shaders!(display, "colored_point", "vgf")?,
             parameters: DrawParameters {
                 blend: glium::Blend {
                     color: glium::BlendingFunction::Addition {
@@ -156,6 +160,39 @@ impl Programs {
             vertex_buffer,
             glium::index::NoIndices(glium::index::PrimitiveType::Points),
             &self.colored_line,
+            &uniform! {
+                width: width,
+                pixel_width: [2. / w as f32, 2. / h as f32],
+                model_transform: [
+                    [mt[0][0], mt[0][1], 0.],
+                    [mt[1][0], mt[1][1], 0.],
+                    [mt[2][0], mt[2][1], 1.]],
+                view_transform: [
+                    [vt[0][0], vt[0][1], 0.],
+                    [vt[1][0], vt[1][1], 0.],
+                    [vt[2][0], vt[2][1], 1.]],
+                aspect_ratio: aspect_ratio,
+            },
+            &self.parameters,
+        )
+    }
+
+    pub fn draw_colored_points(
+        &self,
+        frame: &mut impl Surface,
+        vertex_buffer: VertexBufferSlice<ColoredPoint>,
+        width: f32,
+        model_transform: Transform2D<f32, ModelSpace, CanvasSpace>,
+        view_transform: Transform2D<f32, CanvasSpace, ScreenSpace>,
+    ) -> Result<(), DrawError> {
+        let (w, h) = frame.get_dimensions();
+        let aspect_ratio = w as f32 / h as f32;
+        let mt: [[f32; 2]; 3] = model_transform.to_arrays();
+        let vt: [[f32; 2]; 3] = view_transform.to_arrays();
+        frame.draw(
+            vertex_buffer,
+            glium::index::NoIndices(glium::index::PrimitiveType::Points),
+            &self.colored_point,
             &uniform! {
                 width: width,
                 pixel_width: [2. / w as f32, 2. / h as f32],

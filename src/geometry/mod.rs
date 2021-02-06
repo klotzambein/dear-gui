@@ -2,7 +2,6 @@ use euclid::Point2D;
 use euclid::Vector2D;
 
 pub mod debug;
-pub mod model;
 pub mod nurbs;
 
 #[derive(Clone, Copy, Debug)]
