@@ -42,6 +42,8 @@ impl Color {
     pub const BLACK: Color = Color(0.0, 0.0, 0.0, 1.0);
     pub const WHITE: Color = Color(1.0, 1.0, 1.0, 1.0);
     pub const BLUE: Color = Color(0.1, 0.1, 0.9, 1.0);
+    pub const RED: Color = Color(0.9, 0.1, 0.1, 1.0);
+    pub const GREEN: Color = Color(0.1, 0.9, 0.1, 1.0);
 
     pub fn to_rgb_array(self) -> [f32; 3] {
         [self.0, self.1, self.2]
