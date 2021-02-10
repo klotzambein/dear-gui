@@ -1,3 +1,5 @@
+use std::{cell::RefCell, rc::Rc};
+
 use glium::glutin::event::{Event, KeyboardInput, VirtualKeyCode, WindowEvent};
 use glium::Display;
 
@@ -50,7 +52,7 @@ pub struct Imgui {
 }
 
 impl Imgui {
-    pub fn new(display: Display) -> Imgui {
+    pub fn new(display: Display) -> Rc<RefCell<Imgui>> {
         let mut context = Context::create();
         context.set_ini_filename(None);
 
@@ -75,12 +77,13 @@ impl Imgui {
         let renderer =
             Renderer::init(&mut context, &display).expect("Failed to initialize renderer");
 
-        Imgui {
+        let imgui = Imgui {
             context,
             platform,
             renderer,
             display,
-        }
+        };
+        Rc::new(RefCell::new(imgui))
     }
 }
 

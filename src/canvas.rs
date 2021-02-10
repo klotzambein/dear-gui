@@ -63,10 +63,7 @@ pub struct Canvas {
 }
 
 impl Canvas {
-    pub fn new(
-        display: &Display,
-        click_handler: Box<dyn FnMut(Point2D<f32, CanvasSpace>)>,
-    ) -> Canvas {
+    pub fn new(display: &Display) -> Canvas {
         let programs = Programs::new(display).unwrap();
         Canvas {
             input: InputState {
@@ -78,7 +75,7 @@ impl Canvas {
             preview_translation: None,
             dimensions: display.get_framebuffer_dimensions().into(),
             programs,
-            click_handler,
+            click_handler: Box::new(|_| ()),
         }
     }
 
@@ -120,6 +117,10 @@ impl Canvas {
 
     pub fn input(&mut self) -> CanvasInput<'_> {
         CanvasInput(RefCell::new(self))
+    }
+
+    pub fn set_click_handler(&mut self, handler: Box<dyn FnMut(Point2D<f32, CanvasSpace>)>) {
+        self.click_handler = handler;
     }
 }
 
