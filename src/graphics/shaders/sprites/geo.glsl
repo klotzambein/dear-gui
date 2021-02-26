@@ -25,19 +25,19 @@ void main() {
 
     vec2 uv_origin = vec2(v_texture_index[0] % 8, v_texture_index[0] / 8) / 8.0;
 
-    g_uv = uv_origin + vec2(0.0, 0.0);
+    g_uv = uv_origin + vec2(uv_size, 0.0);
     gl_Position = vec4(a.xy, 0, 1);
     EmitVertex();
     
-    g_uv = uv_origin + vec2(uv_size, 0.0);
+    g_uv = uv_origin + vec2(uv_size, uv_size);
     gl_Position = vec4(b.xy, 0, 1);
     EmitVertex();
 
-    g_uv = uv_origin + vec2(0.0, uv_size);
+    g_uv = uv_origin + vec2(0.0, 0.0);
     gl_Position = vec4(c.xy, 0, 1);
     EmitVertex();
 
-    g_uv = uv_origin + vec2(uv_size, uv_size);
+    g_uv = uv_origin + vec2(0.0, uv_size);
     gl_Position = vec4(d.xy, 0, 1);
     EmitVertex();
 }

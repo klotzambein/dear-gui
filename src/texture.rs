@@ -3,9 +3,9 @@ use std::io::Cursor;
 use glium::texture::Texture2d;
 use glium::{Display, texture::RawImage2d};
 
-pub fn load_png_texture(display: &Display) -> Texture2d {
+pub fn load_png_texture(display: &Display, bytes: &[u8]) -> Texture2d {
     let image = image::load(
-        Cursor::new(&include_bytes!("./../../../assets/tileset.png")[..]),
+        Cursor::new(bytes),
         image::ImageFormat::Png,
     )
     .unwrap()
