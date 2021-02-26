@@ -17,6 +17,7 @@ pub struct Programs {
     pub line: Program,
     pub colored_point: Program,
     pub colored_line: Program,
+    pub sprites: Program,
 }
 
 macro_rules! include_shaders {
@@ -56,6 +57,7 @@ impl Programs {
             line: include_shaders!(display, "line", "vgf")?,
             colored_line: include_shaders!(display, "colored_line", "vgf")?,
             colored_point: include_shaders!(display, "colored_point", "vgf")?,
+            sprites: include_shaders!(display, "sprites", "vgf")?,
             parameters: DrawParameters {
                 blend: glium::Blend {
                     color: glium::BlendingFunction::Addition {
@@ -208,5 +210,16 @@ impl Programs {
             },
             &self.parameters,
         )
+    }
+
+    pub fn draw_sprites(
+        &self,
+        frame: &mut impl Surface,
+        vertex_buffer: VertexBufferSlice<ColoredPoint>,
+        texture_index: u16,
+        model_transform: Transform2D<f32, ModelSpace, CanvasSpace>,
+        view_transform: Transform2D<f32, CanvasSpace, ScreenSpace>,
+    ) -> Result<(), DrawError> {
+        unimplemented!()
     }
 }
