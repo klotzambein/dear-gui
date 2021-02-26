@@ -104,3 +104,12 @@ pub struct ColoredLine {
     pub color: Color,
 }
 implement_vertex!(ColoredLine, start, end, color);
+
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct Sprite {
+    pub vertex: Vf2,
+    pub size: Vf2,
+    pub texture_index: i32,
+}
+implement_vertex!(Sprite, vertex, size, texture_index);

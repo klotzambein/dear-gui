@@ -1,6 +1,7 @@
-use glium::backend::Facade;
+use glium::{backend::Facade, uniforms::{MagnifySamplerFilter, MinifySamplerFilter}};
 use glium::program::ProgramChooserCreationError;
 use glium::vertex::VertexBufferSlice;
+use glium::texture::Texture2d;
 use glium::{program, uniform};
 use glium::{DrawError, DrawParameters, Program, Surface};
 
@@ -9,7 +10,7 @@ use euclid::Transform2D;
 use crate::geometry::{CanvasSpace, ModelSpace, ScreenSpace};
 use crate::graphics::primitives::{Color, ColoredLine, Line, LinePoint};
 
-use super::primitives::ColoredPoint;
+use super::primitives::{ColoredPoint, Sprite};
 
 pub struct Programs {
     pub parameters: DrawParameters<'static>,
@@ -215,11 +216,29 @@ impl Programs {
     pub fn draw_sprites(
         &self,
         frame: &mut impl Surface,
-        vertex_buffer: VertexBufferSlice<ColoredPoint>,
-        texture_index: u16,
+        vertex_buffer: VertexBufferSlice<Sprite>,
+        texture: &Texture2d,
         model_transform: Transform2D<f32, ModelSpace, CanvasSpace>,
         view_transform: Transform2D<f32, CanvasSpace, ScreenSpace>,
     ) -> Result<(), DrawError> {
-        unimplemented!()
+        let mt: [[f32; 2]; 3] = model_transform.to_arrays();
+        let vt: [[f32; 2]; 3] = view_transform.to_arrays();
+        frame.draw(
+            vertex_buffer,
+            glium::index::NoIndices(glium::index::PrimitiveType::Points),
+            &self.sprites,
+            &uniform! {
+                sprite_texture: texture.sampled().magnify_filter(MagnifySamplerFilter::Nearest).minify_filter(MinifySamplerFilter::Linear),
+                model_transform: [
+                    [mt[0][0], mt[0][1], 0.],
+                    [mt[1][0], mt[1][1], 0.],
+                    [mt[2][0], mt[2][1], 1.]],
+                view_transform: [
+                    [vt[0][0], vt[0][1], 0.],
+                    [vt[1][0], vt[1][1], 0.],
+                    [vt[2][0], vt[2][1], 1.]],
+            },
+            &self.parameters,
+        )
     }
 }
