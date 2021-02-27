@@ -1,7 +1,10 @@
-use glium::{backend::Facade, uniforms::{MagnifySamplerFilter, MinifySamplerFilter}};
 use glium::program::ProgramChooserCreationError;
-use glium::vertex::VertexBufferSlice;
 use glium::texture::Texture2d;
+use glium::vertex::VertexBufferSlice;
+use glium::{
+    backend::Facade,
+    uniforms::{MagnifySamplerFilter, MinifySamplerFilter},
+};
 use glium::{program, uniform};
 use glium::{DrawError, DrawParameters, Program, Surface};
 
@@ -228,7 +231,7 @@ impl Programs {
             glium::index::NoIndices(glium::index::PrimitiveType::Points),
             &self.sprites,
             &uniform! {
-                sprite_texture: texture.sampled().magnify_filter(MagnifySamplerFilter::Nearest).minify_filter(MinifySamplerFilter::Linear),
+                sprite_texture: texture.sampled().magnify_filter(MagnifySamplerFilter::Nearest).minify_filter(MinifySamplerFilter::NearestMipmapNearest),
                 model_transform: [
                     [mt[0][0], mt[0][1], 0.],
                     [mt[1][0], mt[1][1], 0.],

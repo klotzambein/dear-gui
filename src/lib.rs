@@ -23,8 +23,8 @@ pub mod canvas;
 pub mod event_handling;
 pub mod geometry;
 pub mod graphics;
-pub mod ui;
 pub mod texture;
+pub mod ui;
 
 pub struct AppInit {
     pub display: Display,
