@@ -23,7 +23,7 @@ void main() {
 
     float uv_size = 1.0 / 8.0;
 
-    vec2 uv_origin = vec2(v_texture_index[0] % 8, v_texture_index[0] / 8) / 8.0;
+    vec2 uv_origin = vec2(v_texture_index[0] % 8, 7 - v_texture_index[0] / 8) / 8.0;
 
     g_uv = uv_origin + vec2(uv_size, 0.0);
     gl_Position = vec4(a.xy, 0, 1);
