@@ -14,5 +14,5 @@ void main() {
 }
 
 float line_alpha() {
-    return 1.0 - length(g_uv.xy);
+    return g_uv.x * g_uv.x + g_uv.y * g_uv.y < 1 ? 1 : 0;
 }
