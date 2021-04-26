@@ -34,12 +34,12 @@ pub struct AppInit {
 }
 
 impl AppInit {
-    pub fn new() -> AppInit {
+    pub fn new(title: impl Into<String>) -> AppInit {
         let event_loop = EventLoop::new();
 
         let wb = glium::glutin::window::WindowBuilder::new()
             .with_inner_size(LogicalSize::new(756.0, 756.0))
-            .with_title("ArchIntelligence");
+            .with_title(title);
 
         let cb = glium::glutin::ContextBuilder::new().with_vsync(true);
 
