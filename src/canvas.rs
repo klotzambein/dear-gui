@@ -50,6 +50,7 @@ where
 pub struct InputState {
     mouse_pos: Point2D<f32, PixelSpace>,
     left_pressed_start: Option<Point2D<f32, PixelSpace>>,
+    right_pressed_start: Option<Point2D<f32, PixelSpace>>,
 }
 
 pub struct Canvas {
@@ -59,7 +60,7 @@ pub struct Canvas {
     preview_translation: Option<Vector2D<f32, CanvasSpace>>,
     dimensions: Size2D<u32, PixelSpace>,
     programs: Programs,
-    click_handler: Box<dyn FnMut(Point2D<f32, CanvasSpace>)>,
+    click_handler: Box<dyn FnMut(Point2D<f32, CanvasSpace>, MouseButton)>,
 }
 
 impl Canvas {
@@ -69,13 +70,14 @@ impl Canvas {
             input: InputState {
                 mouse_pos: Point2D::new(0., 0.),
                 left_pressed_start: None,
+                right_pressed_start: None,
             },
             zoom: 1.0,
             translation: Vector2D::new(0., 0.),
             preview_translation: None,
             dimensions: display.get_framebuffer_dimensions().into(),
             programs,
-            click_handler: Box::new(|_| ()),
+            click_handler: Box::new(|_, _| ()),
         }
     }
 
@@ -119,7 +121,7 @@ impl Canvas {
         CanvasInput(RefCell::new(self))
     }
 
-    pub fn set_click_handler(&mut self, handler: Box<dyn FnMut(Point2D<f32, CanvasSpace>)>) {
+    pub fn set_click_handler(&mut self, handler: Box<dyn FnMut(Point2D<f32, CanvasSpace>, MouseButton)>) {
         self.click_handler = handler;
     }
 }
@@ -159,7 +161,7 @@ impl<'a> CanvasInput<'a> {
                                 .unwrap()
                                 .transform_point(screen);
                             debug!("Clicked at: {:?}", click_pos);
-                            (canvas.click_handler)(click_pos);
+                            (canvas.click_handler)(click_pos, MouseButton::Left);
                         } else {
                             let screen = canvas.pixel_transform().transform_vector(delta);
                             let model = canvas
@@ -223,6 +225,32 @@ impl<'a> CanvasInput<'a> {
                     ..
                 } => {
                     canvas.input.left_pressed_start = Some(canvas.input.mouse_pos);
+                    true
+                }
+                WindowEvent::MouseInput {
+                    button: MouseButton::Right,
+                    state: ElementState::Pressed,
+                    ..
+                } => {
+                    canvas.input.right_pressed_start = Some(canvas.input.mouse_pos);
+                    true
+                }
+                WindowEvent::MouseInput {
+                    button: MouseButton::Right,
+                    state: ElementState::Released,
+                    ..
+                } => {
+                    if let Some(rps) = canvas.input.right_pressed_start.take() {
+                        if rps.distance_to(canvas.input.mouse_pos) < 3. {
+                            let screen = canvas.pixel_transform().transform_point(rps);
+                            let click_pos = canvas
+                                .view_transform()
+                                .inverse()
+                                .unwrap()
+                                .transform_point(screen);
+                            (canvas.click_handler)(click_pos, MouseButton::Right);
+                        }
+                    }
                     true
                 }
                 WindowEvent::CursorMoved { position, .. } => {

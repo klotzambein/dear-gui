@@ -11,7 +11,7 @@ use geometry::CanvasSpace;
 use glium::{
     glutin::{
         dpi::LogicalSize,
-        event::{Event, WindowEvent},
+        event::{Event, WindowEvent, MouseButton},
         event_loop::{ControlFlow, EventLoop},
     },
     Display, Frame,
@@ -55,7 +55,7 @@ impl AppInit {
         }
     }
 
-    pub fn set_canvas_click_handler(&mut self, handler: Box<dyn FnMut(Point2D<f32, CanvasSpace>)>) {
+    pub fn set_canvas_click_handler(&mut self, handler: Box<dyn FnMut(Point2D<f32, CanvasSpace>, MouseButton)>) {
         self.canvas.set_click_handler(handler);
     }
 
