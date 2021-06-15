@@ -51,6 +51,10 @@ impl Color {
     pub fn to_rgba_array(self) -> [f32; 4] {
         [self.0, self.1, self.2, self.3]
     }
+
+    pub fn with_alpha(self, alpha: f32) -> Color {
+        Color(self.0, self.1, self.2, alpha)
+    }
 }
 
 #[repr(C)]
