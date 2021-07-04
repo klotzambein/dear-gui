@@ -6,7 +6,7 @@ use crate::geometry::Line as GLine;
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct Vf2(f32, f32);
+pub struct Vf2(pub f32, pub f32);
 
 impl Vf2 {
     pub const fn new(x: f32, y: f32) -> Vf2 {
