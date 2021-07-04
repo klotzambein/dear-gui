@@ -9,7 +9,7 @@ use crate::geometry::Line as GLine;
 pub struct Vf2(f32, f32);
 
 impl Vf2 {
-    pub fn new(x: f32, y: f32) -> Vf2 {
+    pub const fn new(x: f32, y: f32) -> Vf2 {
         Vf2(x, y)
     }
 }
